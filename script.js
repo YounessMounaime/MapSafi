@@ -1,7 +1,7 @@
 let map = L.map('map').setView([33.5899, -7.6039], 13);
 let geojsonLayer = null;
 
-L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+L.tileLayer('https://www.google.com/maps/vt?lyrs=s@189&gl=ma&x={x}&y={y}&z={z}', {
   subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
   maxZoom: 20
 }).addTo(map);
