@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coordonnées Maroc 26191</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2d89ef">
+  <link rel="icon" href="icon.png" type="image/png" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.0/proj4.js"></script>
+  <style>
+    body { margin: 0; font-family: Arial; }
+    #map { height: 85vh; }
+    .controls {
+      display: flex; gap: 10px; padding: 10px;
+      background: #f8f8f8; align-items: center;
+    }
+    input { padding: 5px; width: 130px; }
+    button { padding: 6px 12px; }
+  </style>
+</head>
+<body>
+
+<div class="controls">
+  <label>X: <input type="number" id="xCoord" placeholder="Est"></label>
+  <label>Y: <input type="number" id="yCoord" placeholder="Nord"></label>
+  <button onclick="afficherPoint()">Afficher</button>
+</div>
+
+<div id="map"></div>
+
+<script>
+  proj4.defs("EPSG:26191","+proj=lcc +lat_1=33.3 +lat_2=35.7 +lat_0=32.5 +lon_0=-5 +x_0=500000 +y_0=300000 +ellps=clrk80 +units=m +no_defs");
+  let map = L.map("map").setView([33.5, -5], 7);
+  L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}&key=VOTRE_CLE_API_GOOGLE', {
+    maxZoom: 20
+  }).addTo(map);
+  let marker;
+
+  function afficherPoint() {
+    const x = parseFloat(document.getElementById("xCoord").value);
+    const y = parseFloat(document.getElementById("yCoord").value);
+    if (isNaN(x) || isNaN(y)) return alert("Coordonnées invalides");
+    const [lon, lat] = proj4("EPSG:26191", "WGS84", [x, y]);
+    if (marker) map.removeLayer(marker);
+    marker = L.marker([lat, lon]).addTo(map)
+      .bindPopup(`Lat: ${lat.toFixed(6)}<br>Lon: ${lon.toFixed(6)}`).openPopup();
+    map.setView([lat, lon], 16);
+  }
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').then(() => {
+      console.log("SW enregistré");
+    });
+  }
+</script>
+</body>
+</html>
